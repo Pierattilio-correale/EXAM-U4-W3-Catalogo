@@ -6,6 +6,7 @@ import Entities.Prestito;
 import Entities.Utente;
 
 import java.time.LocalDate;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -80,178 +81,239 @@ public class Main {
     }
 
     private static void inserisciLibro(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
-        System.out.print("Inserisci il titolo: ");
-        String titolo = scanner.nextLine();
-        System.out.print("Inserisci l'anno di pubblicazione: ");
-        int anno = scanner.nextInt();
-        System.out.print("Inserisci il numero di pagine: ");
-        int numeroPagine = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Inserisci l'autore del libro: ");
-        String autore = scanner.nextLine();
-        System.out.print("Inserisci il genere del libro: ");
-        String genere = scanner.nextLine();
+        try {
+            System.out.print("Inserisci il titolo: ");
+            String titolo = scanner.nextLine();
+            System.out.print("Inserisci l'anno di pubblicazione: ");
+            int anno = scanner.nextInt();
+            System.out.print("Inserisci il numero di pagine: ");
+            int numeroPagine = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Inserisci l'autore del libro: ");
+            String autore = scanner.nextLine();
+            System.out.print("Inserisci il genere del libro: ");
+            String genere = scanner.nextLine();
 
-        Entities.Libri libro = new Entities.Libri(titolo, anno, numeroPagine, autore, genere);
-        elementoDAO.aggiungiElementoDelCatalogo(libro);
-        System.out.println("Libro inserito nel catalogo.");
-
+            Entities.Libri libro = new Entities.Libri(titolo, anno, numeroPagine, autore, genere);
+            elementoDAO.aggiungiElementoDelCatalogo(libro);
+            System.out.println("Libro inserito nel catalogo.");
+        } catch (InputMismatchException e) {
+            System.out.println("Errore: input non valido. Riprova.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Errore imprevisto: " + e.getMessage());
+        }
     }
 
 
     private static void inserisciRivista(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci il titolo: ");
+            String titolo = scanner.nextLine();
+            System.out.print("Inserisci l'anno di pubblicazione: ");
+            int anno = scanner.nextInt();
+            System.out.print("Inserisci il numero di pagine: ");
+            int numeroPagine = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Inserisci la periodicità della rivista (SEMESTRALE, MENSILE, SETTIMANALE): ");
+            String periodicitaStr = scanner.nextLine();
+            Entities.Periodicita periodicita = Entities.Periodicita.valueOf(periodicitaStr.toUpperCase());
 
-        System.out.print("Inserisci il titolo: ");
-        String titolo = scanner.nextLine();
-        System.out.print("Inserisci l'anno di pubblicazione: ");
-        int anno = scanner.nextInt();
-        System.out.print("Inserisci il numero di pagine: ");
-        int numeroPagine = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Inserisci la periodicità della rivista (SEMESTRALE, MENSILE, SETTIMANALE): ");
-        String periodicitaStr = scanner.nextLine();
-        Entities.Periodicita periodicita = Entities.Periodicita.valueOf(periodicitaStr.toUpperCase());
-
-        Entities.Riviste rivista = new Entities.Riviste(titolo, anno, numeroPagine, periodicita);
-        elementoDAO.aggiungiElementoDelCatalogo(rivista);
-        System.out.println("Rivista inserita nel catalogo.");
+            Entities.Riviste rivista = new Entities.Riviste(titolo, anno, numeroPagine, periodicita);
+            elementoDAO.aggiungiElementoDelCatalogo(rivista);
+            System.out.println("Rivista inserita nel catalogo.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Errore: periodicità non valida.");
+        } catch (InputMismatchException e) {
+            System.out.println("Errore: input non valido. Riprova.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Errore imprevisto: " + e.getMessage());
+        }
     }
 
 
-private static void cercaPerIsbn(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
-//        try {
-    System.out.print("Inserisci l'ISBN da cercare: ");
-    int isbn = scanner.nextInt();
-    Entities.ElementoDelCatalogo elemento = elementoDAO.getElementoDelCatalogoConIsbn(isbn);
-    System.out.println("Elemento trovato: " + elemento);
-//        } catch (ElementoNonTrovatoException e) {
-//            System.out.println(e.getMessage());
-//        }
-}
-//
-private static void rimuoviPerIsbn(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
-//        try {
-    System.out.print("Inserisci l'ISBN da rimuovere: ");
-    int isbn = scanner.nextInt();
-    elementoDAO.rimuoviElementoPerIsbn(isbn);
-    System.out.println("Elemento rimosso dal catalogo.");
-//        } catch (ElementoNonTrovatoException e) {
-//            System.out.println(e.getMessage());
-//        }
-}
-
-private static void cercaPerAnno(ElementoDelCatalogoDao elementoDAO , Scanner scanner) {
-    System.out.print("Inserisci l'anno da cercare: ");
-    int anno = scanner.nextInt();
-    scanner.nextLine();
-    List<ElementoDelCatalogo> risultati = elementoDAO.getElementoPerAnnoPublicazione(anno);
-    if (risultati.isEmpty()) {
-        System.out.println("Nessun elemento trovato per l'anno " + anno);
-    } else {
-        System.out.println("Elementi trovati:");
-        risultati.forEach(System.out::println);
-    }
-}
-
-private static void cercaPerAutore(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
-    System.out.print("Inserisci il nome dell'autore: ");
-    String autore = scanner.nextLine();
-    List<Entities.Libri> risultati = elementoDAO.ricercaPerAutore(autore);
-    if (risultati.isEmpty()) {
-        System.out.println("Nessun libro trovato per l'autore " + autore);
-    } else {
-        System.out.println("Entities.Libri trovati:");
-        risultati.forEach(System.out::println);
+    private static void cercaPerIsbn(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci l'ISBN da cercare: ");
+            int isbn = scanner.nextInt();
+            scanner.nextLine();
+            Entities.ElementoDelCatalogo elemento = elementoDAO.getElementoDelCatalogoConIsbn(isbn);
+            if (elemento != null) {
+                System.out.println("Elemento trovato: " + elemento);
+            } else {
+                System.out.println("Elemento non trovato.");
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Errore: ISBN deve essere un numero intero.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
     }
 
-}
-private static void cercaPerTitolo(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
-    System.out.print("Inserisci il nome dell'autore: ");
-    String titolo = scanner.nextLine();
-    List<Entities.ElementoDelCatalogo> risultati = elementoDAO.getElementoPerTitolo(titolo);
-    if (risultati.isEmpty()) {
-        System.out.println("Nessun libro trovato per il titolo " + titolo);
-    } else {
-        System.out.println("Libri trovati:");
-        risultati.forEach(System.out::println);
+    private static void rimuoviPerIsbn(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci l'ISBN da rimuovere: ");
+            int isbn = scanner.nextInt();
+            scanner.nextLine();
+            elementoDAO.rimuoviElementoPerIsbn(isbn);
+            System.out.println("Elemento rimosso dal catalogo.");
+        } catch (InputMismatchException e) {
+            System.out.println("Errore: ISBN deve essere un numero intero.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
     }
-}
 
-private static void cercaElementiInPrestito(PrestitoDao prestitoDAO, Scanner scanner) {
-    System.out.print("Inserisci il numero di tessera utente: ");
-    int numeroDiTessera = scanner.nextInt();
-    List<Prestito> prestitiAttivi = prestitoDAO.elementiAttualmenteInPrestito(numeroDiTessera);
-
-    if (prestitiAttivi.isEmpty()) {
-        System.out.println("Nessun prestito attivo trovato per il numero di tessera " + numeroDiTessera);
-    } else {
-        System.out.println("Elementi attualmente in prestito:");
-        prestitiAttivi.forEach(System.out::println);
+    private static void cercaPerAnno(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci l'anno da cercare: ");
+            int anno = scanner.nextInt();
+            scanner.nextLine();
+            List<ElementoDelCatalogo> risultati = elementoDAO.getElementoPerAnnoPublicazione(anno);
+            if (risultati.isEmpty()) {
+                System.out.println("Nessun elemento trovato per l'anno " + anno);
+            } else {
+                System.out.println("Elementi trovati:");
+                risultati.forEach(System.out::println);
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Errore: inserisci un numero valido per l'anno.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
     }
-}
 
-
-private static void cercaPrestitiScadutiNonRestituiti(PrestitoDao prestitoDAO) {
-    List<Prestito> prestitiScaduti = prestitoDAO.ricercaPrestitiScadutiNonRestituiti();
-
-    if (prestitiScaduti.isEmpty()) {
-        System.out.println("Nessun prestito scaduto e non restituito trovato.");
-    } else {
-        System.out.println("Prestiti scaduti e non restituiti:");
-        prestitiScaduti.forEach(System.out::println);
+    private static void cercaPerAutore(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci il nome dell'autore: ");
+            String autore = scanner.nextLine();
+            List<Entities.Libri> risultati = elementoDAO.ricercaPerAutore(autore);
+            if (risultati.isEmpty()) {
+                System.out.println("Nessun libro trovato per l'autore " + autore);
+            } else {
+                System.out.println("Libri trovati:");
+                risultati.forEach(System.out::println);
+            }
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
     }
+
+    private static void cercaPerTitolo(ElementoDelCatalogoDao elementoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci il titolo: ");
+            String titolo = scanner.nextLine();
+            List<Entities.ElementoDelCatalogo> risultati = elementoDAO.getElementoPerTitolo(titolo);
+            if (risultati.isEmpty()) {
+                System.out.println("Nessun elemento trovato per il titolo " + titolo);
+            } else {
+                System.out.println("Elementi trovati:");
+                risultati.forEach(System.out::println);
+            }
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
     }
+
+    private static void cercaElementiInPrestito(PrestitoDao prestitoDAO, Scanner scanner) {
+        try {
+            System.out.print("Inserisci il numero di tessera utente: ");
+            int numeroDiTessera = scanner.nextInt();
+            scanner.nextLine();
+            List<Prestito> prestitiAttivi = prestitoDAO.elementiAttualmenteInPrestito(numeroDiTessera);
+
+            if (prestitiAttivi.isEmpty()) {
+                System.out.println("Nessun prestito attivo trovato per il numero di tessera " + numeroDiTessera);
+            } else {
+                System.out.println("Elementi attualmente in prestito:");
+                prestitiAttivi.forEach(System.out::println);
+            }
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+            scanner.nextLine();
+        }
+    }
+
+
+    private static void cercaPrestitiScadutiNonRestituiti(PrestitoDao prestitoDAO) {
+        try {
+            List<Prestito> prestitiScaduti = prestitoDAO.ricercaPrestitiScadutiNonRestituiti();
+
+            if (prestitiScaduti.isEmpty()) {
+                System.out.println("Nessun prestito scaduto e non restituito trovato.");
+            } else {
+                System.out.println("Prestiti scaduti e non restituiti:");
+                prestitiScaduti.forEach(System.out::println);
+            }
+        } catch (Exception e) {
+            System.out.println("Errore: " + e.getMessage());
+        }
+    }
+
     private static void inserisciUtente(UtenteDao utenteDao, Scanner scanner) {
-        System.out.print("Inserisci il nome: ");
-        String nome = scanner.nextLine();
+        try {
+            System.out.print("Inserisci il nome: ");
+            String nome = scanner.nextLine();
 
-        System.out.print("Inserisci il cognome: ");
-        String cognome = scanner.nextLine();
+            System.out.print("Inserisci il cognome: ");
+            String cognome = scanner.nextLine();
 
-        System.out.print("Inserisci la data di nascita : ");
-        String dataNascitaStr = scanner.nextLine();
-        LocalDate dataNascita = LocalDate.parse(dataNascitaStr);
+            System.out.print("Inserisci la data di nascita (YYYY-MM-DD): ");
+            String dataNascitaStr = scanner.nextLine();
+            LocalDate dataNascita = LocalDate.parse(dataNascitaStr);
 
-        Utente utente = new Utente();
-        utente.setNome(nome);
-        utente.setCognome(cognome);
-        utente.setDataDiNascita(dataNascita);
+            Utente utente = new Utente();
+            utente.setNome(nome);
+            utente.setCognome(cognome);
+            utente.setDataDiNascita(dataNascita);
 
-        utenteDao.aggiungiUtente(utente);
-        System.out.println("Utente aggiunto correttamente!");
+            utenteDao.aggiungiUtente(utente);
+            System.out.println("Utente aggiunto correttamente!");
+        } catch (Exception e) {
+            System.out.println("Errore durante l'inserimento dell'utente: " + e.getMessage());
+        }
     }
+
     private static void registraPrestito(PrestitoDao prestitoDao, UtenteDao utenteDao, ElementoDelCatalogoDao elementoDao, Scanner scanner) {
-        System.out.print("Inserisci il numero di tessera dell'utente: ");
-        int numeroTessera = scanner.nextInt();
-        scanner.nextLine(); // Consuma newline
-        Utente utente = utenteDao.getUtenteByNumeroTessera(numeroTessera);
+        try {
+            System.out.print("Inserisci il numero di tessera dell'utente: ");
+            int numeroTessera = scanner.nextInt();
+            scanner.nextLine();
+            Utente utente = utenteDao.getUtenteByNumeroTessera(numeroTessera);
 
-        if (utente == null) {
-            System.out.println("Utente non trovato.");
-            return;
+            if (utente == null) {
+                System.out.println("Utente non trovato.");
+                return;
+            }
+
+            System.out.print("Inserisci l'ISBN dell'elemento da prestare: ");
+            int isbn = scanner.nextInt();
+            scanner.nextLine();
+            ElementoDelCatalogo elemento = elementoDao.getElementoDelCatalogoConIsbn(isbn);
+
+            if (elemento == null) {
+                System.out.println("Elemento non trovato.");
+                return;
+            }
+
+            LocalDate dataInizio = LocalDate.now();
+            LocalDate dataFine = dataInizio.plusDays(30);
+
+            Prestito prestito = new Prestito();
+            prestito.setUtente(utente);
+            prestito.setElementoPrestato(elemento);
+            prestito.setDataInizioPrestito(dataInizio);
+            prestito.setRestituzionePrevista(dataFine);
+
+            prestitoDao.aggiungiPrestito(prestito);
+            System.out.println("Prestito registrato con successo.");
+        } catch (Exception e) {
+            System.out.println("Errore durante la registrazione del prestito: " + e.getMessage());
         }
-
-        System.out.print("Inserisci l'ISBN dell'elemento da prestare: ");
-        int isbn = scanner.nextInt();
-        scanner.nextLine();
-        ElementoDelCatalogo elemento = elementoDao.getElementoDelCatalogoConIsbn(isbn);
-
-        if (elemento == null) {
-            System.out.println("Elemento non trovato.");
-            return;
-        }
-
-        LocalDate dataInizio = LocalDate.now();
-        LocalDate dataFine = dataInizio.plusDays(30);
-
-        Prestito prestito = new Prestito();
-        prestito.setUtente(utente);
-        prestito.setElementoPrestato(elemento);
-        prestito.setDataInizioPrestito(dataInizio);
-        prestito.setRestituzionePrevista(dataFine);
-
-        prestitoDao.aggiungiPrestito(prestito);
-        System.out.println("Prestito registrato con successo.");
     }
 }
 
