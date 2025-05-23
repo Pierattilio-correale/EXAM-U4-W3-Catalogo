@@ -224,7 +224,7 @@ public class Main {
             System.out.print("Inserisci il numero di tessera utente: ");
             int numeroDiTessera = scanner.nextInt();
             scanner.nextLine();
-            List<Prestito> prestitiAttivi = prestitoDAO.elementiAttualmenteInPrestito(numeroDiTessera);
+            List<ElementoDelCatalogo> prestitiAttivi = prestitoDAO.elementiAttualmenteInPrestito(numeroDiTessera);
 
             if (prestitiAttivi.isEmpty()) {
                 System.out.println("Nessun prestito attivo trovato per il numero di tessera " + numeroDiTessera);

@@ -1,5 +1,6 @@
 package Dao;
 
+import Entities.ElementoDelCatalogo;
 import Entities.Prestito;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -14,8 +15,8 @@ public class PrestitoDao {
         this.em = em;
     }
 
-    public List<Prestito> elementiAttualmenteInPrestito(int numeroDiTessera){
-        TypedQuery<Prestito> query = em.createQuery("select p from Prestito p where p.utente.numeroDiTessera = :numeroDiTessera and p.dataRestituzioneEffettiva is null", Prestito.class);
+    public List<ElementoDelCatalogo> elementiAttualmenteInPrestito(int numeroDiTessera){
+        TypedQuery<ElementoDelCatalogo> query = em.createQuery("select p.elementoPrestato from Prestito p where p.utente.numeroDiTessera = :numeroDiTessera and p.dataRestituzioneEffettiva is null", ElementoDelCatalogo.class);
         query.setParameter("numeroDiTessera" , numeroDiTessera);
         return query.getResultList();
     }
